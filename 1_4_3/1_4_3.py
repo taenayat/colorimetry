@@ -4,13 +4,9 @@ from scipy.integrate import simps
 
 # Load spectral data
 spd_d65_ref = pd.read_csv('1_4_3/D65_Il_2nm.txt', sep='\s+', header=None)[1]
-# spd_ref = pd.read_csv('1_4_3/CIE_std_illum_D65.csv', header=None)
-# spd_ref.columns = ['wavelength','spd']
-# spd_d65_ref = spd_ref[spd_ref.wavelength <= 780][spd_ref.wavelength >= 380][spd_ref.wavelength % 2 == 0]['spd'].reset_index(drop=True)
 spd_d65_test = pd.read_csv('1_4_3/D65_Lab.txt', sep='\s+', header=None)[0]
 
 reflectance_samples = np.transpose(np.array(pd.read_csv('1_4_3/TestColorSamples_2nm.txt', sep='\s+', header=None)))
-# cmf_data = pd.read_csv('cmf_1964_10deg.csv')
 cmf_data = pd.read_csv('1_4_3/CMFs_2deg_2nm.txt', sep='\s+', header=None)
 wavelengths = cmf_data[0]
 cmf_x, cmf_y, cmf_z = cmf_data[1], cmf_data[2], cmf_data[3]
@@ -62,14 +58,6 @@ X_d, Y_d, Z_d = compute_xyz(np.ones_like(wavelengths), spd_d65_test, cmf_x, cmf_
 uk, _, vk= xyz_to_uwv(X_d, Y_d, Z_d)
 
 
-# for reflectance in reflectance_samples:
-#     X_r, Y_r, Z_r = compute_xyz(reflectance, spd_d65_ref, cmf_x, cmf_y, cmf_z, wavelengths)
-#     X_s, Y_s, Z_s = compute_xyz(reflectance, spd_d65_test, cmf_x, cmf_y, cmf_z, wavelengths)
-#     xyz_ref.append((X_r, Y_r, Z_r))
-#     xyz_sim.append((X_s, Y_s, Z_s))
-#     uwv_ref.append(xyz_to_uwv(X_r, Y_r, Z_r))
-#     uwv_sim.append(xyz_to_uwv(X_s, Y_s, Z_s))
-
 for reflectance in reflectance_samples:
     X_r, Y_r, Z_r = compute_xyz(reflectance, spd_d65_ref, cmf_x, cmf_y, cmf_z, wavelengths)
     X_s, Y_s, Z_s = compute_xyz(reflectance, spd_d65_test, cmf_x, cmf_y, cmf_z, wavelengths)
@@ -96,7 +84,8 @@ for (U_r, W_r, V_r), (U_s, W_s, V_s) in zip(uwv_ref, uwv_sim):
     cri_values.append(cri)
 
 # Compute general color rendering index Ra
-Ra = np.mean(cri_values[:8])  # Average of the first 8 samples
+Ra = np.mean(cri_values[:8])  
 print(f"General Color Rendering Index (Ra): {Ra:.2f}")
+
 ## without chromatic adaptation CRI: 99.66
 ## with chromatic adaptation: 99.67
