@@ -104,13 +104,26 @@ for key, value in avg_delta_e.items():
 # Check if the nearest neighbor identified by each formula is the same for each chip
 consistency_count = 0
 total_chips = len(reflectances)
+consistency_0_1 = consistency_0_2 = consistency_1_2 = 0
 
 for i in range(total_chips):
     if nearest_neighbors['CIELAB'][i] == nearest_neighbors['CIE94'][i] == nearest_neighbors['CIEDE2000'][i]:
         consistency_count += 1
+    if nearest_neighbors['CIELAB'][i] == nearest_neighbors['CIE94'][i]:
+        consistency_0_1 += 1
+    if nearest_neighbors['CIELAB'][i] == nearest_neighbors['CIEDE2000'][i]:
+        consistency_0_2 += 1
+    if nearest_neighbors['CIE94'][i] == nearest_neighbors['CIEDE2000'][i]:
+        consistency_1_2 += 1
 
 consistency_percentage = (consistency_count / total_chips) * 100
-print(f"Percentage of chips with consistent nearest neighbors across all formulas: {consistency_percentage:.2f}%")
+consistency_0_1 = consistency_0_1 / total_chips * 100
+consistency_0_2 = consistency_0_2 / total_chips * 100
+consistency_1_2 = consistency_1_2 / total_chips * 100
+print(f"Percentage of chips with consistent nearest neighbors across all formulas: {consistency_percentage:.1f}%")
+print(f"Percentage of chips with consistent between CIELAB and CIE94: {consistency_0_1:.1f}%")
+print(f"Percentage of chips with consistent between CIELAB and CIEDE2000: {consistency_0_2:.1f}%")
+print(f"Percentage of chips with consistent between CIE94 and CIEDE2000: {consistency_1_2:.1f}%")
 
 # Optional: Detailed comparison of nearest neighbors
 for i in range(total_chips):
